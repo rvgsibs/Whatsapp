@@ -47,7 +47,9 @@ const client = new Client({
     headless: true,
     args: [
       '--no-sandbox',
+      '--no-warnings',
       '--trace-warnings',
+      '--no-deprecation',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
       '--disable-accelerated-2d-canvas',
@@ -55,8 +57,7 @@ const client = new Client({
       '--no-zygote',
       '--single-process', // <- this one doesn't works in Windows
       '--disable-gpu'
-    ],
-    executablePath: process.env.PUPPETEER_EXEC_PATH
+    ]
   },
   session: sessionCfg,
   
@@ -156,7 +157,6 @@ app.post('/send-message', [
   body('number').notEmpty(),
   body('message').notEmpty(),
 ], async (req, res) => {
-  debugger;
   const errors = validationResult(req).formatWith(({
     msg
   }) => {
@@ -199,7 +199,10 @@ app.post('/send-message', [
 
 // Send message
 
-
+process.on('unhandledRejection', (reason, promise) => {
+  console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+  // Application specific logging, throwing an error, or other logic here
+});
 process.on('warning', e => console.warn(e.stack));
 
 server.listen(port, function() {
