@@ -9,6 +9,7 @@ const { phoneNumberFormatter } = require('./helpers/formatter');
 const fileUpload = require('express-fileupload');
 const axios = require('axios');
 const mime = require('mime-types');
+const puppeteer = require('puppeteer');
 
 
 const port = process.env.PORT || 3000;
@@ -43,7 +44,7 @@ app.get('/', (req, res) => {
 const client = new Client({
   restartOnAuthFail: true,
   puppeteer: {
-    headless: true,
+    headless: false,
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
@@ -55,7 +56,8 @@ const client = new Client({
       '--disable-gpu'
     ],
   },
-  session: sessionCfg
+  session: sessionCfg,
+  
 });
 
 
@@ -148,14 +150,35 @@ const checkRegisteredNumber = async function(number) {
   return isRegistered;
 }
 
+app.post('/send-message', [
+  body('number').notEmpty(),
+  body('message').notEmpty(),
+], async (req, res) => {
+  debugger;
+  const errors = validationResult(req).formatWith(({
+    msg
+  }) => {
+    return msg;
+  });
 
-// Send message
-app.post('/send-message', (req, res) => {
-  const sender = req.body.sender;
-  const number = req.body.number + '@c.us';
+  if (!errors.isEmpty()) {
+    return res.status(422).json({
+      status: false,
+      message: errors.mapped()
+    });
+  }
+
+  const number = phoneNumberFormatter(req.body.number);
   const message = req.body.message;
 
-  const client = sessions.find(sess => sess.id == sender).client;
+  const isRegisteredNumber = await checkRegisteredNumber(number);
+
+  if (!isRegisteredNumber) {
+    return res.status(422).json({
+      status: false,
+      message: 'The number is not registered'
+    });
+  }
 
   client.sendMessage(number, message).then(response => {
     res.status(200).json({
@@ -169,6 +192,11 @@ app.post('/send-message', (req, res) => {
     });
   });
 });
+
+
+
+// Send message
+
 
 process.on('warning', e => console.warn(e.stack));
 
