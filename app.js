@@ -44,9 +44,10 @@ app.get('/', (req, res) => {
 const client = new Client({
   restartOnAuthFail: true,
   puppeteer: {
-    headless: false,
+    headless: true,
     args: [
       '--no-sandbox',
+      '--trace-warnings',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
       '--disable-accelerated-2d-canvas',
@@ -55,6 +56,7 @@ const client = new Client({
       '--single-process', // <- this one doesn't works in Windows
       '--disable-gpu'
     ],
+    executablePath: process.env.PUPPETEER_EXEC_PATH
   },
   session: sessionCfg,
   
