@@ -149,35 +149,13 @@ const checkRegisteredNumber = async function(number) {
 }
 
 
-app.post('/send-message', [
-  body('number').notEmpty(),
-  body('message').notEmpty(),
-], async (req, res) => {
-  debugger;
-  const errors = validationResult(req).formatWith(({
-    msg
-  }) => {
-    return msg;
-  });
-
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      status: false,
-      message: errors.mapped()
-    });
-  }
-
-  const number = phoneNumberFormatter(req.body.number);
+// Send message
+app.post('/send-message', (req, res) => {
+  const sender = req.body.sender;
+  const number = req.body.number + '@c.us';
   const message = req.body.message;
 
-  const isRegisteredNumber = await checkRegisteredNumber(number);
-
-  if (!isRegisteredNumber) {
-    return res.status(422).json({
-      status: false,
-      message: 'The number is not registered'
-    });
-  }
+  const client = sessions.find(sess => sess.id == sender).client;
 
   client.sendMessage(number, message).then(response => {
     res.status(200).json({
@@ -190,11 +168,6 @@ app.post('/send-message', [
       response: err
     });
   });
-});
-
-process.on('unhandledRejection', (reason, p) => {
-  console.error('Unhandled Rejection at:', p, 'reason:', reason)
-  process.exit(1)
 });
 
 
