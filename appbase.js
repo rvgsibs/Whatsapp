@@ -12,6 +12,12 @@ const mime = require('mime-types');
 
 const port = process.env.PORT || 3000;
 
+const browser = await puppeteer.launch({
+  headless: false,
+  args: ['--no-sandbox', '--disable-setuid-sandbox']
+});
+
+
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
