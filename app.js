@@ -199,7 +199,9 @@ app.post('/send-message', [
 
 
 
-
+process.on("unhandledRejection", err => {
+	console.log(`Sed: ${err.stack}`);
+});
 
 server.listen(port, function() {
   console.log('App running on *: ' + port);
