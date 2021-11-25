@@ -24,6 +24,8 @@ app.use(fileUpload({
   debug: true
 }));
 
+
+
 const SESSION_FILE_PATH = './whatsapp-session.json';
 let sessionCfg;
 if (fs.existsSync(SESSION_FILE_PATH)) {
@@ -52,6 +54,10 @@ const client = new Client({
     ],
   },
   session: sessionCfg
+});
+
+const browser = await puppeteer.launch({
+  args: ['--no-sandbox', '--disable-setuid-sandbox'],
 });
 
 client.on('message', async msg => {
