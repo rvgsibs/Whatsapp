@@ -148,16 +148,11 @@ const checkRegisteredNumber = async function(number) {
   return isRegistered;
 }
 
-const catchExceptions=func=> {
-  return(req,res,next)=>{
-      Promise.resolve(funct(req,res)).catch(next);
-  };
-};
 
 app.post('/send-message', [
   body('number').notEmpty(),
   body('message').notEmpty(),
-], catchExceptions(async (req, res) => {
+], async (req, res) => {
   debugger;
   const errors = validationResult(req).formatWith(({
     msg
@@ -195,13 +190,12 @@ app.post('/send-message', [
       response: err
     });
   });
-}));
-
-
-
-process.on("unhandledRejection", err => {
-	console.log(`Sed: ${err.stack}`);
 });
+
+
+
+
+
 
 server.listen(port, function() {
   console.log('App running on *: ' + port);
