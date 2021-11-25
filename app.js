@@ -170,7 +170,7 @@ app.post('/send-message', (req, res) => {
   });
 });
 
-
+process.on('warning', e => console.warn(e.stack));
 
 server.listen(port, function() {
   console.log('App running on *: ' + port);
