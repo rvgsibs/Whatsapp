@@ -56,6 +56,8 @@ const client = new Client({
       '--disable-background-timer-throttling',
       '--disable-backgrounding-occluded-windows',
       '--disable-renderer-backgrounding',
+      '--unhandled-rejections=strict',
+      '--trace-warnings'
     ]
   },
   session: sessionCfg,
@@ -145,20 +147,22 @@ io.on('connection', function(socket) {
     client.initialize();
   });
 
-  client.on('connect_error', err => {
-    handleErrors(err)
-  } );
-  client.on('connect_failed', err => {
-    handleErrors(err)
-  } );
+ 
 
   client.on('unhandledRejection', (reason, promise) => {
     console.log('Unhandled Rejection at:', promise, 'reason:', reason);
     // Application specific logging, throwing an error, or other logic here
   });
   client.on('warning', e => {
-    console.warn(e.stack);
+    console.log(e.stack);
   });
+
+  client.on('connect_error', err => {
+    console.log(err);
+  } );
+  client.on('connect_failed', err => {
+    console.log(err);
+  } );
 
 });
 
