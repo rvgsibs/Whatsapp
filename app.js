@@ -14,6 +14,7 @@ const puppeteer = require('puppeteer');
 const port = process.env.PORT || 3000;
 
 
+
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -143,6 +144,22 @@ io.on('connection', function(socket) {
     client.destroy();
     client.initialize();
   });
+
+  client.on('connect_error', err => {
+    handleErrors(err)
+  } );
+  client.on('connect_failed', err => {
+    handleErrors(err)
+  } );
+
+  client.on('unhandledRejection', (reason, promise) => {
+    console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+    // Application specific logging, throwing an error, or other logic here
+  });
+  client.on('warning', e => {
+    console.warn(e.stack);
+  });
+
 });
 
 
