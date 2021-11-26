@@ -13,6 +13,12 @@ const puppeteer = require('puppeteer');
 
 const port = process.env.PORT || 3000;
 
+process.on('unhandledRejection', (reason, promise) => {
+  console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+  // Application specific logging, throwing an error, or other logic here
+});
+process.on('warning', e => console.warn(e.stack));
+
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -43,8 +49,6 @@ const client = new Client({
     headless: true,
     args: [
       '--no-sandbox',
-      '--no-warnings',
-      '--trace-warnings',
       '--no-deprecation',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
@@ -52,7 +56,10 @@ const client = new Client({
       '--no-first-run',
       '--no-zygote',
       '--single-process', // <- this one doesn't works in Windows
-      '--disable-gpu'
+      '--disable-gpu',
+      '--disable-background-timer-throttling',
+      '--disable-backgrounding-occluded-windows',
+      '--disable-renderer-backgrounding',
     ]
   },
   session: sessionCfg,
@@ -152,11 +159,7 @@ const checkRegisteredNumber = async function(number) {
 
 // Send message
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.log('Unhandled Rejection at:', promise, 'reason:', reason);
-  // Application specific logging, throwing an error, or other logic here
-});
-process.on('warning', e => console.warn(e.stack));
+
 
 server.listen(port, function() {
   console.log('App running on *: ' + port);
