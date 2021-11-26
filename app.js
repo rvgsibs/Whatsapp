@@ -11,9 +11,7 @@ const axios = require('axios');
 const mime = require('mime-types');
 const puppeteer = require('puppeteer');
 
-
 const port = process.env.PORT || 3000;
-
 
 const app = express();
 const server = http.createServer(app);
@@ -26,8 +24,6 @@ app.use(express.urlencoded({
 app.use(fileUpload({
   debug: true
 }));
-
-
 
 const SESSION_FILE_PATH = './whatsapp-session.json';
 let sessionCfg;
@@ -152,49 +148,6 @@ const checkRegisteredNumber = async function(number) {
   const isRegistered = await client.isRegisteredUser(number);
   return isRegistered;
 }
-
-app.post('/send-message', [
-  body('number').notEmpty(),
-  body('message').notEmpty(),
-], async (req, res) => {
-  const errors = validationResult(req).formatWith(({
-    msg
-  }) => {
-    return msg;
-  });
-
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      status: false,
-      message: errors.mapped()
-    });
-  }
-
-  const number = phoneNumberFormatter(req.body.number);
-  const message = req.body.message;
-
-  const isRegisteredNumber = await checkRegisteredNumber(number);
-
-  if (!isRegisteredNumber) {
-    return res.status(422).json({
-      status: false,
-      message: 'The number is not registered'
-    });
-  }
-
-  client.sendMessage(number, message).then(response => {
-    res.status(200).json({
-      status: true,
-      response: response
-    });
-  }).catch(err => {
-    res.status(500).json({
-      status: false,
-      response: err
-    });
-  });
-});
-
 
 
 // Send message
