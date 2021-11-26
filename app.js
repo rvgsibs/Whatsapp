@@ -153,16 +153,16 @@ io.on('connection', function(socket) {
     console.log('Unhandled Rejection at:', promise, 'reason:', reason);
     // Application specific logging, throwing an error, or other logic here
   });
-  client.on('warning', e => {
-    console.log(e.stack);
-  });
+  
+  // server
+  client.on("error", function() {
+    client.emit("my error", "Something bad happened!");
+});
 
-  client.on('connect_error', err => {
-    console.log(err);
-  } );
-  client.on('connect_failed', err => {
-    console.log(err);
-  } );
+// client
+client.on('my error', function (text) {
+ console.log(text);
+});    
 
 });
 
