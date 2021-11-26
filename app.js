@@ -106,55 +106,91 @@ client.initialize();
 
 // Socket IO
 io.on('connection', function(socket) {
-  socket.emit('message', 'Connecting...');
-
-  client.on('qr', (qr) => {
-    console.log('QR RECEIVED', qr);
-    qrcode.toDataURL(qr, (err, url) => {
-      socket.emit('qr', url);
-      socket.emit('message', 'QR Code received, scan please!');
-    });
-  });
-
-  client.on('ready', () => {
-    socket.emit('ready', 'Whatsapp is ready!');
-    socket.emit('message', 'Whatsapp is ready!');
-  });
-
-  client.on('authenticated', (session) => {
-    socket.emit('authenticated', 'Whatsapp is authenticated!');
-    socket.emit('message', 'Whatsapp is authenticated!');
-    console.log('AUTHENTICATED', session);
-    sessionCfg = session;
-    fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function(err) {
-      if (err) {
-        console.error(err);
-      }
-    });
-  });
-
-  client.on('auth_failure', function(session) {
-    socket.emit('message', 'Auth failure, restarting...');
-  });
-
-  client.on('disconnected', (reason) => {
-    socket.emit('message', 'Whatsapp is disconnected!');
-    fs.unlinkSync(SESSION_FILE_PATH, function(err) {
-        if(err) return console.log(err);
-        console.log('Session file deleted!');
-    });
-    client.destroy();
-    client.initialize();
-  });
-
- 
-
-  client.on('unhandledRejection', (reason, promise) => {
-    console.log('Unhandled Rejection at:', promise, 'reason:', reason);
-    // Application specific logging, throwing an error, or other logic here
-  });
+  try{
+    socket.emit('message', 'Connecting...');
+  }catch(ex){
+    console.log(ex);
+  }
   
-  // server
+
+  try{
+    client.on('qr', (qr) => {
+      console.log('QR RECEIVED', qr);
+      qrcode.toDataURL(qr, (err, url) => {
+        socket.emit('qr', url);
+        socket.emit('message', 'QR Code received, scan please!');
+      });
+    });
+  
+  }catch(ex){
+    console.log(ex);
+  }
+
+  
+  
+  try{
+    client.on('ready', () => {
+      socket.emit('ready', 'Whatsapp is ready!');
+      socket.emit('message', 'Whatsapp is ready!');
+    });
+  }catch(ex){
+    console.log(ex);
+  }
+
+  try{
+    client.on('authenticated', (session) => {
+      socket.emit('authenticated', 'Whatsapp is authenticated!');
+      socket.emit('message', 'Whatsapp is authenticated!');
+      console.log('AUTHENTICATED', session);
+      sessionCfg = session;
+      fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function(err) {
+        if (err) {
+          console.error(err);
+        }
+      });
+    });
+  }catch(ex){
+    console.log(ex);
+  }
+
+  try{
+    client.on('auth_failure', function(session) {
+      socket.emit('message', 'Auth failure, restarting...');
+    });
+  }catch(ex){
+    console.log(ex);
+  }
+
+
+  try{
+    client.on('disconnected', (reason) => {
+      socket.emit('message', 'Whatsapp is disconnected!');
+      fs.unlinkSync(SESSION_FILE_PATH, function(err) {
+          if(err) return console.log(err);
+          console.log('Session file deleted!');
+      });
+      client.destroy();
+      client.initialize();
+    });
+  
+  }catch(ex){
+    console.log(ex);
+  }
+
+  
+
+  try{
+    client.on('unhandledRejection', (reason, promise) => {
+      console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+      // Application specific logging, throwing an error, or other logic here
+    });
+  
+  }catch(ex){
+    console.log(ex);
+  }
+
+  try{
+    // server
   client.on("error", function() {
     client.emit("my error", "Something bad happened!");
 });
@@ -162,7 +198,17 @@ io.on('connection', function(socket) {
 // client
 client.on('my error', function (text) {
  console.log(text);
-});    
+});  
+  
+  }catch(ex){
+    console.log(ex);
+  }
+ 
+ 
+
+  
+  
+   
 
 });
 
