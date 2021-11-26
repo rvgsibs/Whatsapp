@@ -13,11 +13,6 @@ const puppeteer = require('puppeteer');
 
 const port = process.env.PORT || 3000;
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.log('Unhandled Rejection at:', promise, 'reason:', reason);
-  // Application specific logging, throwing an error, or other logic here
-});
-process.on('warning', e => console.warn(e.stack));
 
 const app = express();
 const server = http.createServer(app);
