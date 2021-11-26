@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "start:dev": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node --trace-warnings ./node_modules/@angular/cli/bin/ng build –prod myPackage"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "whatsapp-api",
@@ -22,9 +21,8 @@
     "express-validator": "^6.9.2",
     "http": "0.0.1-security",
     "mime-types": "^2.1.32",
-    "npm": "^6.14.5",
     "qrcode": "^1.4.4",
-    "socket.io": "^2.3.0",
+    "socket.io": "2.3.0",
     "whatsapp-web.js": "github:pedroslopez/whatsapp-web.js"
   },
   "devDependencies": {
